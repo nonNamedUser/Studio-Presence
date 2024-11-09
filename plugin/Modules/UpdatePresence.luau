@@ -16,5 +16,9 @@ return function(image, imageText, details, state, URL)
 	
 	local h=game:GetService('HttpService')
 	
-	h:PostAsync(URL, h:JSONEncode(presenceData), Enum.HttpContentType.ApplicationJson)
+	local s,e = pcall(function()
+		local z=h:PostAsync(URL, h:JSONEncode(presenceData), Enum.HttpContentType.ApplicationJson)
+	end)
+	
+	return s
 end
