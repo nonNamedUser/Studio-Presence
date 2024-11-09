@@ -22,12 +22,21 @@ local players=game:GetService("Players"):GetPlayers()
 
 local imageText="Roblox Studio Logo"
 
-local s=check(url)
+local s=check(`{dm}:{tostring(port)}/`)
+
+local suc=true
 
 if not s[1] then
-	warn("Please run the server! Run the server and restart studio/close the place.")
-	return
+	suc=false
+	warn("Please start the server, or allow the http requests")
 end
+
+repeat
+	task.wait(2)
+	local success=check(`{dm}:{tostring(port)}/`)
+	if not success[1] then warn("Please start the server, or allow the http requests"); end
+	suc=success[1]
+until suc
 
 local StudioService=game:GetService('StudioService')
 
@@ -42,9 +51,9 @@ task.spawn(function()
 		end
 		
 		if pcount > 1 then
-			state="Developing with a team"
+			state="With a team: yes"
 		else
-			state="Developing solo"
+			state="With a team: no"
 		end
 		
 		local activeScript = StudioService.ActiveScript
@@ -52,10 +61,16 @@ task.spawn(function()
 			local scriptType = activeScript.ClassName
 			details=`Editing {scriptType} "{activeScript.Name}"`
 			--update(image,	imageText,	details,	state,	url)
+		elseif game:GetService('RunService'):IsRunMode() then
+			details="Testing the game."
 		else
-			details="Developing a game :D"
+			details="Developing"
 		end
 		
-		update(image,	imageText,	details,	state,	url)
+		local success=update(image,	imageText,	details,	state,	url)
+		
+		if not success then
+			warn("Failed to update presence. Please start the server, or allow the http requests.")
+		end
 	end
 end)
